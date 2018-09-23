@@ -11,6 +11,8 @@ MAXSPEED = 16
 
 class Car(Actor):
     v=0
+    chp = np.zeros(8)
+    finish = 0
 
     def update(self,bg,p21,p12,p2):
         bg.center=(bg.center[0]+np.sin(np.deg2rad(self.angle))*self.v,bg.center[1]+np.cos(np.deg2rad(self.angle))*self.v)
@@ -60,6 +62,15 @@ class Car(Actor):
             if self.v > 0:
                 self.v = self.v - 0.03
                 p12.v = p12.v - 0.03
+
+        for i in range(247,255):
+            if screen.surface.get_at((x,y)) == (i,255,255) or screen.surface.get_at((x,y)) == (i,255,254):
+                self.chp[i-247]=1
+                print("checkpoint! "+str(i-247)+" "+str(i))
+        
+        if sum(self.chp)>=6 and self.finish == 0 and p2.finish == 0:
+            if screen.surface.get_at((x,y)) == (255,255,255):
+                self.finish = 1
 
 
     def acc(self):
@@ -111,6 +122,10 @@ def draw():
     else:
         screen.draw.text(str(int(time()-time_start)).zfill(2),color="red",midtop=(WIDTH//2+5,30),fontsize=60)
 
+    if p1.finish == 1:
+        screen.draw.text("Player 1 won!",color="red",midtop=(WIDTH//2+5,300),fontsize=60)
+    if p2.finish == 1:
+        screen.draw.text("Player 2 won!",color="red",midtop=(WIDTH//2+5,300),fontsize=60)
 def update():
     if time()-time_start >=0:
         if keyboard.a:
